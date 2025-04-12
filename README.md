@@ -1,4 +1,4 @@
-<h1 align="center">SportsIn Clone ✨</h1>
+<h1 align="center">SportsIn ✨</h1>
 
 ![Demo App](/frontend/public/screenshot-for-readme.png)
 

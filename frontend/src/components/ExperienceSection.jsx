@@ -7,7 +7,7 @@ const ExperienceSection = ({ userData, isOwnProfile, onSave }) => {
 	const [experiences, setExperiences] = useState(userData.experience || []);
 	const [newExperience, setNewExperience] = useState({
 		title: "",
-		company: "",
+		Club: "",
 		startDate: "",
 		endDate: "",
 		description: "",
@@ -15,12 +15,12 @@ const ExperienceSection = ({ userData, isOwnProfile, onSave }) => {
 	});
 
 	const handleAddExperience = () => {
-		if (newExperience.title && newExperience.company && newExperience.startDate) {
+		if (newExperience.title && newExperience.Club && newExperience.startDate) {
 			setExperiences([...experiences, newExperience]);
 
 			setNewExperience({
 				title: "",
-				company: "",
+				Club: "",
 				startDate: "",
 				endDate: "",
 				description: "",
@@ -55,7 +55,7 @@ const ExperienceSection = ({ userData, isOwnProfile, onSave }) => {
 						<Briefcase size={20} className='mr-2 mt-1' />
 						<div>
 							<h3 className='font-semibold'>{exp.title}</h3>
-							<p className='text-gray-600'>{exp.company}</p>
+							<p className='text-gray-600'>{exp.Club}</p>
 							<p className='text-gray-500 text-sm'>
 								{formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : "Present"}
 							</p>
@@ -81,9 +81,9 @@ const ExperienceSection = ({ userData, isOwnProfile, onSave }) => {
 					/>
 					<input
 						type='text'
-						placeholder='Company'
-						value={newExperience.company}
-						onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })}
+						placeholder='Club'
+						value={newExperience.Club}
+						onChange={(e) => setNewExperience({ ...newExperience, Club: e.target.value })}
 						className='w-full p-2 border rounded mb-2'
 					/>
 					<input
@@ -101,7 +101,7 @@ const ExperienceSection = ({ userData, isOwnProfile, onSave }) => {
 							onChange={handleCurrentlyWorkingChange}
 							className='mr-2'
 						/>
-						<label htmlFor='currentlyWorking'>I currently work here</label>
+						<label htmlFor='currentlyWorking'>I currently with them</label>
 					</div>
 					{!newExperience.currentlyWorking && (
 						<input

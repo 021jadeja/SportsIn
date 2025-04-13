@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
 		experience: [
 			{
 				title: String,
-				company: String,
+				Club: String,
 				startDate: Date,
 				endDate: Date,
 				description: String,

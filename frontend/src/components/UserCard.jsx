@@ -5,7 +5,7 @@ export default function Sidebar({ user }) {
 	return (
 		<div
 			className='bg-base-100 border-r-4 rounded-xl shadow p-5'
-			style={{ borderColor: "#f0f8ff" }} // aliceblue border on the right
+			style={{ borderColor: "#e99717" }} // aliceblue border on the right
 		>
 			<div className='text-center'>
 				<div
@@ -61,7 +61,7 @@ export default function Sidebar({ user }) {
 				<Link
 					to={`/profile/${user.username}`}
 					className='text-sm font-semibold'
-					style={{ color: "#f0f8ff" }} // aliceblue color
+					style={{ color: "#e99717" }} // aliceblue color
 				>
 					Visit your profile
 				</Link>

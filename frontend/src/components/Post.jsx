@@ -86,6 +86,29 @@ const Post = ({ post }) => {
 		}
 	};
 
+	const handleShare = () => {
+		const shareUrl = `${window.location.origin}/post/${post._id}`;
+	
+		if (navigator.share) {
+			navigator
+				.share({
+					title: "Check out this post on SportsIn!",
+					text: post.content || "Here's something interesting I found.",
+					url: shareUrl,
+				})
+				.catch((err) => {
+					if (err.name !== "AbortError") {
+						console.error("Share failed:", err);
+						toast.error("Something went wrong while sharing.");
+					}
+				});
+		} else {
+			navigator.clipboard.writeText(shareUrl);
+			toast.success("Post link copied to clipboard!");
+		}
+	};
+	
+
 	return (
 		<div className='bg-secondary rounded-lg shadow mb-4'>
 			<div className='p-4'>
@@ -130,7 +153,9 @@ const Post = ({ post }) => {
 						text={`Comment (${comments.length})`}
 						onClick={() => setShowComments(!showComments)}
 					/>
-					<PostAction icon={<Share2 size={18} />} text='Share' />
+
+					{/* ✅ Added onClick for Share */}
+					<PostAction icon={<Share2 size={18} />} text='Share' onClick={handleShare} />
 				</div>
 			</div>
 
@@ -179,4 +204,5 @@ const Post = ({ post }) => {
 		</div>
 	);
 };
+
 export default Post;

@@ -36,6 +36,12 @@ const PostCreation = ({ user }) => {
 	});
 
 	const handlePostCreation = () => {
+		// Validation for content and image
+		if (!content && !image) {
+			toast.error("Please write something or select a photo to post.");
+			return;
+		}
+
 		createPostMutation({ content, image });
 	};
 

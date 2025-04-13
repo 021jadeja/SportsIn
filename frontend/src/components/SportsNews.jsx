@@ -6,7 +6,6 @@ const categories = [
 	{ label: "Fitness", apiCategory: "health", query: "fitness workout" },
 	{ label: "Motivation", apiCategory: "general", query: "sports motivation success" },
 	{ label: "Campus", apiCategory: "sports", query: "college university sports" },
-	{ label: "NCC", apiCategory: "general", query: "NCC cadet army police" },
 	{ label: "Tech", apiCategory: "technology", query: "sports tech wearables" },
 	{ label: "Youth", apiCategory: "general", query: "indian youth exam" }
 ];
@@ -22,15 +21,21 @@ const SportsNews = () => {
 				setLoading(true);
 				const apiKey = import.meta.env.VITE_NEWS_API_KEY;
 
-				const url = `https://newsapi.org/v2/top-headlines?category=${selectedCategory.apiCategory}&language=en&pageSize=5${
-					selectedCategory.query ? `&q=${selectedCategory.query}` : ""
-				}&apiKey=${apiKey}`;
+				let url = "";
+
+				if (selectedCategory.query) {
+					// Use 'everything' endpoint when searching with keywords
+					url = `https://newsapi.org/v2/everything?q=${selectedCategory.query}&language=en&pageSize=5&sortBy=publishedAt&apiKey=${apiKey}`;
+				} else {
+					// Use 'top-headlines' for general category browsing
+					url = `https://newsapi.org/v2/top-headlines?category=${selectedCategory.apiCategory}&language=en&pageSize=5&apiKey=${apiKey}`;
+				}
 
 				const response = await axios.get(url);
 				setArticles(response.data.articles);
-				setLoading(false);
 			} catch (error) {
 				console.error("Error fetching sports news:", error);
+			} finally {
 				setLoading(false);
 			}
 		};
@@ -62,7 +67,9 @@ const SportsNews = () => {
 			{loading ? (
 				<p className='text-info'>Loading news...</p>
 			) : articles.length === 0 ? (
-				<p className='text-info'>No news available.</p>
+				<div className='text-center text-sm text-gray-500'>
+					<p>No news found for <span className="font-medium text-primary">{selectedCategory.label}</span>. Try another category.</p>
+				</div>
 			) : (
 				<ul className='space-y-4 max-h-96 overflow-y-auto pr-2'>
 					{articles.map((article, index) => (

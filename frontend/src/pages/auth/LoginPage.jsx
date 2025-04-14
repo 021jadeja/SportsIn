@@ -6,7 +6,7 @@ const LoginPage = () => {
 		<div className='min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
 			<div className='sm:mx-auto sm:w-full sm:max-w-md'>
 				<img className='mx-auto h-40 w-auto' src='/logo.svg' alt='SportsIn' />
-				<h2 className=' text-center text-3xl font-extrabold text-gray-900'>Sign in to your account</h2>
+				<h2 className=' text-center text-3xl font-extrabold text-gray-900'>Welcome back, Champion.</h2>
 			</div>
 
 			<div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md shadow-md'>

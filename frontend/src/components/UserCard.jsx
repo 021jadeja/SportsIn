@@ -26,7 +26,7 @@ export default function Sidebar({ user }) {
 				<p className='text-info text-xs'>{user.connections.length} connections</p>
 			</div>
 
-			<div className='border-t border-base-200 mt-4 pt-4'>
+			{/* <div className='border-t border-base-200 mt-4 pt-4'>
 				<nav>
 					<ul className='space-y-2'>
 						<li>
@@ -55,7 +55,7 @@ export default function Sidebar({ user }) {
 						</li>
 					</ul>
 				</nav>
-			</div>
+			</div> */}
 
 			<div className='border-t border-base-200 pt-4 mt-4'>
 				<Link
@@ -63,7 +63,7 @@ export default function Sidebar({ user }) {
 					className='text-sm font-semibold'
 					style={{ color: "#e99717" }} // aliceblue color
 				>
-					Visit your profile
+					Visit profile
 				</Link>
 			</div>
 		</div>

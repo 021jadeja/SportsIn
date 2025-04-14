@@ -24,10 +24,8 @@ const SportsNews = () => {
 				let url = "";
 
 				if (selectedCategory.query) {
-					// Use 'everything' endpoint when searching with keywords
 					url = `https://newsapi.org/v2/everything?q=${selectedCategory.query}&language=en&pageSize=5&sortBy=publishedAt&apiKey=${apiKey}`;
 				} else {
-					// Use 'top-headlines' for general category browsing
 					url = `https://newsapi.org/v2/top-headlines?category=${selectedCategory.apiCategory}&language=en&pageSize=5&apiKey=${apiKey}`;
 				}
 
@@ -44,7 +42,10 @@ const SportsNews = () => {
 	}, [selectedCategory]);
 
 	return (
-		<div className='bg-base-100 border-l-4 border-primary rounded-xl shadow p-5'>
+		<div
+			className='bg-white border-l-4 rounded-xl shadow p-5'
+			style={{ borderColor: "#22b7dc" }} // same border as Sidebar
+		>
 			<h2 className='text-lg font-bold text-primary mb-4'>Latest News</h2>
 
 			{/* CATEGORY BUTTONS */}
@@ -68,7 +69,10 @@ const SportsNews = () => {
 				<p className='text-info'>Loading news...</p>
 			) : articles.length === 0 ? (
 				<div className='text-center text-sm text-gray-500'>
-					<p>No news found for <span className="font-medium text-primary">{selectedCategory.label}</span>. Try another category.</p>
+					<p>
+						No news found for{" "}
+						<span className='font-medium text-primary'>{selectedCategory.label}</span>. Try another category.
+					</p>
 				</div>
 			) : (
 				<ul className='space-y-4 max-h-96 overflow-y-auto pr-2'>

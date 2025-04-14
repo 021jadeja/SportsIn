@@ -1,5 +1,41 @@
 import User from "../models/user.model.js";
 import cloudinary from "../lib/cloudinary.js";
+import Connection from "../models/connection.model.js"; // make sure this is imported at the top if not already
+
+// 🔍 Search unconnected users by name
+export const searchUnconnectedUsers = async (req, res) => {
+	try {
+		const { term } = req.query;
+		const currentUserId = req.user._id;
+
+		// Get all connections related to the user (connected, pending, received)
+		const connections = await Connection.find({
+			$or: [
+				{ requester: currentUserId },
+				{ recipient: currentUserId }
+			]
+		});
+
+		// Get all user IDs involved in connections
+		const connectedUserIds = connections.flatMap(conn =>
+			[conn.requester.toString(), conn.recipient.toString()]
+		);
+
+		// Filter out current user ID
+		const excludedUserIds = [...new Set([...connectedUserIds, currentUserId.toString()])];
+
+		// Search users who are NOT connected and match the term
+		const users = await User.find({
+			_id: { $nin: excludedUserIds },
+			name: { $regex: term, $options: "i" }
+		}).select("name username profilePicture");
+
+		res.json(users);
+	} catch (error) {
+		console.error("Error in searchUnconnectedUsers controller:", error);
+		res.status(500).json({ message: "Server error" });
+	}
+};
 
 // ✅ Get suggested connections (not already connected & not self)
 export const getSuggestedConnections = async (req, res) => {
@@ -53,6 +89,7 @@ export const getPublicProfile = async (req, res) => {
 		res.status(500).json({ message: "Server error" });
 	}
 };
+
 
 // ✅ Update user profile (with optional image uploads to Cloudinary)
 export const updateProfile = async (req, res) => {

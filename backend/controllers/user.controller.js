@@ -1,6 +1,6 @@
 import User from "../models/user.model.js";
 import cloudinary from "../lib/cloudinary.js";
-import Connection from "../models/connection.model.js"; // make sure this is imported at the top if not already
+import Connection from "../models/connection.model.js";
 
 // 🔍 Search unconnected users by name
 export const searchUnconnectedUsers = async (req, res) => {
@@ -8,23 +8,16 @@ export const searchUnconnectedUsers = async (req, res) => {
 		const { term } = req.query;
 		const currentUserId = req.user._id;
 
-		// Get all connections related to the user (connected, pending, received)
 		const connections = await Connection.find({
-			$or: [
-				{ requester: currentUserId },
-				{ recipient: currentUserId }
-			]
+			$or: [{ requester: currentUserId }, { recipient: currentUserId }],
 		});
 
-		// Get all user IDs involved in connections
 		const connectedUserIds = connections.flatMap(conn =>
 			[conn.requester.toString(), conn.recipient.toString()]
 		);
 
-		// Filter out current user ID
 		const excludedUserIds = [...new Set([...connectedUserIds, currentUserId.toString()])];
 
-		// Search users who are NOT connected and match the term
 		const users = await User.find({
 			_id: { $nin: excludedUserIds },
 			name: { $regex: term, $options: "i" }
@@ -37,7 +30,7 @@ export const searchUnconnectedUsers = async (req, res) => {
 	}
 };
 
-// ✅ Get suggested connections (not already connected & not self)
+// ✅ Get suggested connections
 export const getSuggestedConnections = async (req, res) => {
 	try {
 		const currentUser = await User.findById(req.user._id).select("connections");
@@ -58,7 +51,7 @@ export const getSuggestedConnections = async (req, res) => {
 	}
 };
 
-// ✅ Get user by ID (used in ProfilePage via /users/:id)
+// ✅ Get user by ID
 export const getUserById = async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id).select("-password");
@@ -74,7 +67,7 @@ export const getUserById = async (req, res) => {
 	}
 };
 
-// ✅ Get public profile by username (used for username-based profiles)
+// ✅ Get public profile by username
 export const getPublicProfile = async (req, res) => {
 	try {
 		const user = await User.findOne({ username: req.params.username }).select("-password");
@@ -90,19 +83,20 @@ export const getPublicProfile = async (req, res) => {
 	}
 };
 
-
-// ✅ Update user profile (with optional image uploads to Cloudinary)
+// ✅ Update user profile
 export const updateProfile = async (req, res) => {
 	try {
 		const allowedFields = [
 			"name",
 			"username",
+			"email", // ✅ ADDED email
 			"headline",
 			"about",
 			"location",
 			"skills",
 			"experience",
 			"education",
+			"emailVisible",
 		];
 
 		const updatedData = {};
@@ -113,7 +107,7 @@ export const updateProfile = async (req, res) => {
 			}
 		}
 
-		// Upload profile picture if present
+		// Upload profile picture
 		if (req.body.profilePicture) {
 			const result = await cloudinary.uploader.upload(req.body.profilePicture, {
 				folder: "sportsin/profilePictures",
@@ -121,7 +115,7 @@ export const updateProfile = async (req, res) => {
 			updatedData.profilePicture = result.secure_url;
 		}
 
-		// Upload banner image if present
+		// Upload banner image
 		if (req.body.bannerImg) {
 			const result = await cloudinary.uploader.upload(req.body.bannerImg, {
 				folder: "sportsin/bannerImages",

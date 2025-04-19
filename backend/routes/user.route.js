@@ -5,14 +5,14 @@ import {
 	getPublicProfile,
 	getUserById,
 	updateProfile,
-	searchUnconnectedUsers, // <-- import controller function
+	searchUnconnectedUsers,
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
 router.get("/suggestions", protectRoute, getSuggestedConnections);
 router.get("/username/:username", getPublicProfile);
-router.get("/search", protectRoute, searchUnconnectedUsers); // <-- add this line
+router.get("/search", protectRoute, searchUnconnectedUsers);
 router.get("/:id", protectRoute, getUserById);
 router.put("/profile", protectRoute, updateProfile);
 

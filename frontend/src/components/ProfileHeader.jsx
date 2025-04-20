@@ -256,7 +256,18 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 						</button>
 					) : (
 						<button
-							onClick={() => setIsEditing(true)}
+							onClick={() => {
+								setEditedData({
+									name: userData.name || "",
+									headline: userData.headline || "",
+									location: userData.location || "",
+									email: userData.email || "",
+									emailVisible: userData.emailVisible ?? true,
+									profilePicture: userData.profilePicture || "",
+									bannerImg: userData.bannerImg || "",
+								});
+								setIsEditing(true);
+							}}
 							className="w-full bg-primary text-white py-2 px-4 rounded-full hover:bg-primary-dark transition duration-300"
 						>
 							Edit Profile

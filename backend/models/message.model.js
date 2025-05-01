@@ -5,12 +5,13 @@ const messageSchema = new mongoose.Schema(
     sender: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     content: { type: String, required: true },
-    threadId: { type: String, required: true }  // New field
+    threadId: { type: String, required: true },
+    isRead: { type: Boolean, default: false }, // Track unread messages
   },
   { timestamps: true }
 );
 
-// Ensure a consistent threadId for any two users
+// Generate threadId based on sender and receiver
 messageSchema.pre("validate", function (next) {
   if (!this.threadId && this.sender && this.receiver) {
     const ids = [this.sender.toString(), this.receiver.toString()].sort();

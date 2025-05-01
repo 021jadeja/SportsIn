@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
-import http from "http"; // NEW
-import { Server } from "socket.io"; // NEW
+import http from "http";
+import { Server } from "socket.io";
 
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
@@ -18,11 +18,11 @@ import { connectDB } from "./lib/db.js";
 dotenv.config();
 
 const app = express();
-const server = http.createServer(app); // CREATE HTTP SERVER
+const server = http.createServer(app); // Create HTTP server
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://localhost:5173",
+      "http://localhost:5173", 
       "https://sportsin-frontend-rgx5.onrender.com",
     ],
     credentials: true,
@@ -70,11 +70,21 @@ if (process.env.NODE_ENV === "production") {
 io.on("connection", (socket) => {
   console.log("⚡ New client connected:", socket.id);
 
-  // Example listener
+  // Listen for message send event
   socket.on("send_message", (data) => {
+    console.log("Received message:", data);
+    // Broadcast the message to all clients
     io.emit("receive_message", data);
   });
 
+  // Listen for message read event
+  socket.on("message_read", (messageId) => {
+    console.log(`Message with ID ${messageId} has been read`);
+    // Broadcast to other users that the message was read
+    io.emit("message_read", messageId);
+  });
+
+  // Listen for disconnect
   socket.on("disconnect", () => {
     console.log("❌ Client disconnected:", socket.id);
   });

@@ -86,7 +86,7 @@ const ChatPage = () => {
       <div className="flex h-full bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Left: Connections */}
         <div className="w-1/3 bg-gray-50 border-r overflow-y-auto">
-          <div className="px-4 py-3 bg-gray-200 text-gray-600 text-lg font-medium">Contacts</div>
+          <div className="px-4 py-3 bg-gray-200 text-gray-600 text-lg font-medium">Connections</div>
           {connections.map((conn) => (
             <div
               key={conn._id}
@@ -133,7 +133,7 @@ const ChatPage = () => {
                       </div>
 
                       {/* Timestamp below the message box */}
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 mt-7 ml-1">
                         {formatTimestamp(msg.createdAt)} {/* Assuming `createdAt` is the timestamp field */}
                       </div>
                     </div>

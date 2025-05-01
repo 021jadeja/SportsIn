@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
 import { Link, useLocation } from "react-router-dom";
-import { Bell, Home, LogOut, Users, Search, MessagesSquare } from "lucide-react"; // Removed User icon
+import { Bell, Home, LogOut, Users, Search, MessagesSquare } from "lucide-react";
+import { io } from "socket.io-client";
 
 const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,6 +24,13 @@ const Navbar = () => {
     enabled: !!authUser,
   });
 
+  // Fetch unread messages count
+  const { data: unreadMessages } = useQuery({
+    queryKey: ["unreadMessages"],
+    queryFn: async () => axiosInstance.get("/messages/unread").then((res) => res.data),
+    enabled: !!authUser,
+  });
+
   const { mutate: logout } = useMutation({
     mutationFn: () => axiosInstance.post("/auth/logout"),
     onSuccess: () => {
@@ -32,6 +40,7 @@ const Navbar = () => {
 
   const unreadNotificationCount = notifications?.data.filter((notif) => !notif.read).length;
   const unreadConnectionRequestsCount = connectionRequests?.data?.length;
+  const unreadMessagesCount = unreadMessages?.count || 0; // Make sure the server sends the count in `unreadMessages.count`
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -124,6 +133,11 @@ const Navbar = () => {
                 >
                   <MessagesSquare size={20} />
                   <span className="text-xs hidden md:block">Messages</span>
+                  {unreadMessagesCount > 0 && (
+                    <span className="absolute -top-1 -right-1 md:right-4 bg-blue-500 text-white text-xs rounded-full size-3 md:size-4 flex items-center justify-center">
+                      {unreadMessagesCount}
+                    </span>
+                  )}
                 </Link>
 
                 <Link

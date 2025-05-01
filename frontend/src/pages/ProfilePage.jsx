@@ -36,8 +36,6 @@ const ProfilePage = () => {
         if (updatedData.experience) formData.append("experience", JSON.stringify(updatedData.experience));
         if (updatedData.education) formData.append("education", JSON.stringify(updatedData.education));
         if (updatedData.email) formData.append("email", updatedData.email);
-        if (typeof updatedData.emailVisible !== "undefined")
-          formData.append("emailVisible", updatedData.emailVisible);
 
         dataToSend = formData;
         config.headers = { "Content-Type": "multipart/form-data" };
@@ -45,7 +43,6 @@ const ProfilePage = () => {
         dataToSend = {
           ...updatedData,
           email: updatedData.email,
-          emailVisible: updatedData.emailVisible,
         };
       }
 
@@ -68,6 +65,28 @@ const ProfilePage = () => {
       <ProfileHeader userData={user} isOwnProfile={isOwnProfile} onSave={handleSave} />
 
       <AboutSection userData={user} isOwnProfile={isOwnProfile} onSave={handleSave} />
+
+      {/* Email Section */}
+      <div className="bg-white shadow rounded-lg p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4">Email</h2>
+        {isOwnProfile ? (
+          <input
+            type="email"
+            defaultValue={user.email}
+            onBlur={(e) => handleSave({ email: e.target.value })}
+            placeholder="Enter your email"
+            className="w-full p-2 border rounded"
+            required
+          />
+        ) : (
+          <a
+            href={`mailto:${user.email}`}
+            className="text-blue-600 underline hover:text-blue-800"
+          >
+            {user.email}
+          </a>
+        )}
+      </div>
 
       {/* Skills Section */}
       <div className="bg-white shadow rounded-lg p-6 mb-6">

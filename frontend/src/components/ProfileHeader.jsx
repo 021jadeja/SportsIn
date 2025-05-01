@@ -74,7 +74,9 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 	}, [isConnected, connectionStatus]);
 
 	const renderConnectionButton = () => {
-		const baseClass = "text-white py-2 px-4 rounded-full transition duration-300 flex items-center justify-center";
+		const baseClass =
+			"text-white py-2 px-4 rounded-full transition duration-300 flex items-center justify-center";
+
 		switch (getConnectionStatus) {
 			case "connected":
 				return (
@@ -154,7 +156,13 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 				{isEditing && (
 					<label className="absolute top-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer">
 						<Camera size={20} />
-						<input type="file" className="hidden" name="bannerImg" onChange={handleImageChange} accept="image/*" />
+						<input
+							type="file"
+							className="hidden"
+							name="bannerImg"
+							onChange={handleImageChange}
+							accept="image/*"
+						/>
 					</label>
 				)}
 			</div>
@@ -166,11 +174,16 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 						src={editedData.profilePicture || userData.profilePicture || "/avatar.png"}
 						alt={userData.name}
 					/>
-
 					{isEditing && (
 						<label className="absolute bottom-0 right-1/2 transform translate-x-16 bg-white p-2 rounded-full shadow cursor-pointer">
 							<Camera size={20} />
-							<input type="file" className="hidden" name="profilePicture" onChange={handleImageChange} accept="image/*" />
+							<input
+								type="file"
+								className="hidden"
+								name="profilePicture"
+								onChange={handleImageChange}
+								accept="image/*"
+							/>
 						</label>
 					)}
 				</div>
@@ -211,39 +224,6 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 							<span className="text-gray-600">{userData.location}</span>
 						)}
 					</div>
-
-					<div className="mt-2">
-						{isEditing ? (
-							<>
-								<input
-									type="email"
-									value={editedData.email ?? userData.email}
-									onChange={(e) => setEditedData({ ...editedData, email: e.target.value })}
-									className="w-full p-2 border rounded mt-2"
-									placeholder="Enter email"
-								/>
-								<div className="flex items-center justify-center mt-2">
-									<label className="mr-2">Show Email:</label>
-									<input
-										type="checkbox"
-										checked={editedData.emailVisible ?? userData.emailVisible}
-										onChange={(e) =>
-											setEditedData((prev) => ({
-												...prev,
-												emailVisible: e.target.checked,
-											}))
-										}
-									/>
-								</div>
-							</>
-						) : (
-							userData.emailVisible && (
-								<p className="text-gray-600">
-									Email: <span className="font-medium">{userData.email}</span>
-								</p>
-							)
-						)}
-					</div>
 				</div>
 
 				{isOwnProfile ? (
@@ -261,8 +241,6 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 									name: userData.name || "",
 									headline: userData.headline || "",
 									location: userData.location || "",
-									email: userData.email || "",
-									emailVisible: userData.emailVisible ?? true,
 									profilePicture: userData.profilePicture || "",
 									bannerImg: userData.bannerImg || "",
 								});

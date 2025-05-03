@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
-import { Link, useLocation } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import { Bell, Home, LogOut, Users, Search, MessagesSquare } from "lucide-react";
-import { io } from "socket.io-client";
 
 const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,7 +23,6 @@ const Navbar = () => {
     enabled: !!authUser,
   });
 
-  // Fetch unread messages count
   const { data: unreadMessages } = useQuery({
     queryKey: ["unreadMessages"],
     queryFn: async () => axiosInstance.get("/messages/unread").then((res) => res.data),
@@ -40,8 +38,9 @@ const Navbar = () => {
 
   const unreadNotificationCount = notifications?.data.filter((notif) => !notif.read).length;
   const unreadConnectionRequestsCount = connectionRequests?.data?.length;
-  const unreadMessagesCount = unreadMessages?.count || 0; // Make sure the server sends the count in `unreadMessages.count`
+  const unreadMessagesCount = unreadMessages?.count || 0;
 
+  // Fetch search results when the search term changes
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (searchTerm.trim()) {
@@ -62,7 +61,15 @@ const Navbar = () => {
     setSearchTerm(e.target.value);
   };
 
-  const isActive = (path) => location.pathname === path ? "bg-gray-200 rounded-md" : "";
+  const isProfileActive = () =>
+    location.pathname.startsWith("/profile") &&
+    location.pathname.includes(authUser?.username);
+
+  // Handle message read status
+  const markMessagesAsRead = () => {
+    // Manually update unread messages count after marking as read
+    queryClient.invalidateQueries(["unreadMessages"]);
+  };
 
   return (
     <nav className="bg-secondary shadow-md sticky top-0 z-10">
@@ -106,17 +113,24 @@ const Navbar = () => {
 
             {authUser ? (
               <>
-                <Link
+                {/* Home */}
+                <NavLink
                   to="/"
-                  className={`text-neutral flex flex-col items-center px-3 py-2 ${isActive("/")}`}
+                  end
+                  className={({ isActive }) =>
+                    `text-neutral flex flex-col items-center px-3 py-2 ${isActive ? "bg-gray-200 rounded-md" : ""}`
+                  }
                 >
                   <Home size={20} />
                   <span className="text-xs hidden md:block">Home</span>
-                </Link>
+                </NavLink>
 
-                <Link
+                {/* Network */}
+                <NavLink
                   to="/network"
-                  className={`text-neutral flex flex-col items-center relative px-3 py-2 ${isActive("/network")}`}
+                  className={({ isActive }) =>
+                    `text-neutral flex flex-col items-center relative px-3 py-2 ${isActive ? "bg-gray-200 rounded-md" : ""}`
+                  }
                 >
                   <Users size={20} />
                   <span className="text-xs hidden md:block">Network</span>
@@ -125,11 +139,14 @@ const Navbar = () => {
                       {unreadConnectionRequestsCount}
                     </span>
                   )}
-                </Link>
+                </NavLink>
 
-                <Link
+                {/* Messages */}
+                <NavLink
                   to="/messages"
-                  className={`text-neutral flex flex-col items-center relative px-3 py-2 ${isActive("/messages")}`}
+                  className={({ isActive }) =>
+                    `text-neutral flex flex-col items-center relative px-3 py-2 ${isActive ? "bg-gray-200 rounded-md" : ""}`
+                  }
                 >
                   <MessagesSquare size={20} />
                   <span className="text-xs hidden md:block">Messages</span>
@@ -138,11 +155,14 @@ const Navbar = () => {
                       {unreadMessagesCount}
                     </span>
                   )}
-                </Link>
+                </NavLink>
 
-                <Link
+                {/* Notifications */}
+                <NavLink
                   to="/notifications"
-                  className={`text-neutral flex flex-col items-center relative px-3 py-2 ${isActive("/notifications")}`}
+                  className={({ isActive }) =>
+                    `text-neutral flex flex-col items-center relative px-3 py-2 ${isActive ? "bg-gray-200 rounded-md" : ""}`
+                  }
                 >
                   <Bell size={20} />
                   <span className="text-xs hidden md:block">Notifications</span>
@@ -151,12 +171,12 @@ const Navbar = () => {
                       {unreadNotificationCount}
                     </span>
                   )}
-                </Link>
+                </NavLink>
 
-                {/* Profile Picture instead of Me icon */}
+                {/* Profile */}
                 <Link
                   to={`/profile/${authUser.username}`}
-                  className={`text-neutral flex flex-col items-center px-3 py-2 ${isActive(`/profile/${authUser.username}`)}`}
+                  className={`text-neutral flex flex-col items-center px-3 py-2 ${isProfileActive() ? "bg-gray-200 rounded-md" : ""}`}
                 >
                   <img
                     src={authUser.profilePicture || "/default-profile.png"}
@@ -166,6 +186,7 @@ const Navbar = () => {
                   <span className="text-xs hidden md:block">Me</span>
                 </Link>
 
+                {/* Logout */}
                 <button
                   className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-800"
                   onClick={() => logout()}

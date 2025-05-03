@@ -6,12 +6,11 @@ const messageSchema = new mongoose.Schema(
     receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     content: { type: String, required: true },
     threadId: { type: String, required: true },
-    isRead: { type: Boolean, default: false }, // Track unread messages
+    isRead: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
-// Generate threadId based on sender and receiver
 messageSchema.pre("validate", function (next) {
   if (!this.threadId && this.sender && this.receiver) {
     const ids = [this.sender.toString(), this.receiver.toString()].sort();
@@ -21,5 +20,4 @@ messageSchema.pre("validate", function (next) {
 });
 
 const Message = mongoose.model("Message", messageSchema);
-
 export default Message;

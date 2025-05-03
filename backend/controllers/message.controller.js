@@ -11,7 +11,7 @@ export const sendMessage = async (req, res) => {
       receiver: receiverId,
       content,
       threadId,
-      isRead: false, // New message is unread by default
+      isRead: false,
     });
 
     res.status(201).json(newMessage);
@@ -21,13 +21,12 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-// Fetch messages in a thread and mark as read
+// Fetch messages and mark them as read
 export const fetchMessages = async (req, res) => {
   try {
     const { userId } = req.params;
     const threadId = [req.user._id.toString(), userId].sort().join("_");
 
-    // Mark all unread messages as read
     await Message.updateMany(
       { threadId, receiver: req.user._id, isRead: false },
       { $set: { isRead: true } }
@@ -41,27 +40,17 @@ export const fetchMessages = async (req, res) => {
   }
 };
 
-// Get unread message counts
-export const getUnreadCounts = async (req, res) => {
+// ✅ Get total unread message count
+export const getUnreadMessageCount = async (req, res) => {
   try {
-    const unreadCounts = await Message.aggregate([
-      {
-        $match: {
-          receiver: req.user._id,
-          isRead: false,
-        },
-      },
-      {
-        $group: {
-          _id: "$sender", // Group by sender
-          count: { $sum: 1 },
-        },
-      },
-    ]);
+    const count = await Message.countDocuments({
+      receiver: req.user._id,
+      isRead: false,
+    });
 
-    res.json(unreadCounts); // Example: [{ _id: senderId, count: 2 }]
+    res.json({ count });
   } catch (error) {
-    console.error("getUnreadCounts error:", error);
-    res.status(500).json({ message: "Failed to fetch unread counts" });
+    console.error("getUnreadMessageCount error:", error);
+    res.status(500).json({ message: "Failed to fetch unread message count" });
   }
 };

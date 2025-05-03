@@ -15,6 +15,7 @@ const ChatPage = () => {
   const [typingUser, setTypingUser] = useState(null);
   const typingTimeout = useRef(null);
   const messagesEndRef = useRef(null);
+  const emojiPickerRef = useRef(null); // Ref for emoji picker
   const queryClient = useQueryClient();
 
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
@@ -59,6 +60,21 @@ const ChatPage = () => {
 
     return () => socket.disconnect();
   }, [authUser]);
+
+  useEffect(() => {
+    // Close emoji picker if clicked outside of it
+    const handleClickOutside = (e) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleTyping = () => {
     socket.emit("typing", { to: selectedUser, from: authUser._id });
@@ -124,8 +140,8 @@ const ChatPage = () => {
                       <div
                         className={`px-4 py-3 rounded-lg max-w-xs ${
                           msg.sender === selectedUser
-                            ? "bg-orange-200 text-black"
-                            : "bg-blue-500 text-white"
+                            ? "bg-orange-100 text-black" // Lighter, transparent background for received messages
+                            : "bg-blue-400 text-white" // Lighter, transparent background for sent messages
                         }`}
                       >
                         {/* Message content */}
@@ -166,7 +182,7 @@ const ChatPage = () => {
                 </button>
 
                 {showEmojiPicker && (
-                  <div className="absolute bottom-16 left-4 z-10">
+                  <div ref={emojiPickerRef} className="absolute bottom-16 left-4 z-10">
                     <EmojiPicker onEmojiClick={handleEmojiClick} />
                   </div>
                 )}
